@@ -22,6 +22,9 @@ private slots:
 
     void on_sendBtn_clicked();
 
+protected:
+    bool eventFilter(QObject *target, QEvent *event);
+
 private:
     Ui::Widget *ui;
     QTcpServer *tcpserver;

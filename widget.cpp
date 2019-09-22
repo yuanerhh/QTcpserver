@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QDateTime>
+#include <QKeyEvent>
 
 #define PORT_SERVER 8888
 
@@ -9,6 +10,9 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    ui->textwrite->setFocusPolicy(Qt::StrongFocus);
+    ui->textwrite->setFocus();
+    ui->textwrite->installEventFilter(this);
     tcpserver = NULL;
     tcpsocket = NULL;
 
@@ -48,6 +52,23 @@ Widget::~Widget()
     delete ui;
 }
 
+bool Widget::eventFilter(QObject *target, QEvent *event)
+{
+    if (target == ui->textwrite)
+    {
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent *key = static_cast<QKeyEvent *>(event);
+            if (key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter)
+            {
+                on_sendBtn_clicked();
+                return true;
+            }
+        }
+    }
+
+    return QWidget::eventFilter(target, event);
+}
 
 void Widget::on_btnclose_clicked()
 {
@@ -66,5 +87,6 @@ void Widget::on_sendBtn_clicked()
     {
         QString str = ui->textwrite->toPlainText();
         tcpsocket->write(str.toUtf8().data());
+        ui->textwrite->clear();
     }
 }

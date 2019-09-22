@@ -24,6 +24,9 @@ private slots:
 
     void on_btn_disConnect_clicked();
 
+protected:
+    bool eventFilter(QObject *target, QEvent *event);
+
 private:
     Ui::client *ui;
     QTcpServer *tcpserver;
